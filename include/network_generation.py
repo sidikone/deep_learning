@@ -10,6 +10,7 @@ from tensorflow.keras.layers import Input, Dense, Flatten
 from tensorflow.keras.layers import Conv1D, AveragePooling1D, MaxPooling1D
 
 from tensorflow.keras.utils import to_categorical
+from utils import mean_center, normalization
 
 
 class NeuralNetwork:
@@ -81,7 +82,7 @@ class NeuralNetwork:
         return None
 
 
-def data_loader(typ: str) -> List:
+def data_loader(typ: str, stand=None) -> List:
     x_train, x_ctrl = 0, 0
     if typ is 'set_1':
         x_train = np.load('../data/data_set_1/x_train_1.npy')
@@ -90,6 +91,14 @@ def data_loader(typ: str) -> List:
     elif typ is 'set_2':
         x_train = np.load('../data/data_set_1/x_train_2.npy')
         x_ctrl = np.load('../data/data_set_1/x_ctrl_2.npy')
+
+    if stand is 'normalize':
+        x_train = normalization(x_train)
+        x_ctrl = normalization(x_ctrl)
+
+    elif stand is 'center':
+        x_train = mean_center(x_train)
+        x_ctrl = mean_center(x_ctrl)
 
     y_train = np.load('../data/data_set_1/y_train.npy')
     y_train = to_categorical(y_train)
@@ -100,7 +109,7 @@ def data_loader(typ: str) -> List:
     return [x_train, y_train, x_ctrl, y_ctrl]
 
 
-def first_model(data, save=False):
+def first_model(data, fit=False, save=False):
     net = NeuralNetwork(name='1D_neural_network')
     net.add_input(nb_lines=100)
     net.add_dense(nb=100, activation='relu')
@@ -110,15 +119,16 @@ def first_model(data, save=False):
     net.compile_network(optim=opt_net, loss='categorical_crossentropy', metrics=['accuracy'])
     net.summary()
     [x_train, y_train, x_ctrl, y_ctrl] = data
-    
-    net.fit_network(x_train, y_train, validation=(x_ctrl, y_ctrl), batch_size=128, epochs=500, verbose=2)
+
+    if fit:
+        net.fit_network(x_train, y_train, validation=(x_ctrl, y_ctrl), batch_size=128, epochs=500, verbose=2)
 
     if save is not None:
         net.save(save)
     return None
 
 
-def second_model(data, save=False):
+def second_model(data, fit=False, save=False):
     net2 = NeuralNetwork(name='2D_neural_network')
     net2.add_input(nb_lines=10, nb_cols=10)
     net2.add_conv1D(filter_nb=16, filter_siz=3, padding_type='same', activation='relu')
@@ -132,7 +142,9 @@ def second_model(data, save=False):
     [x_train, y_train, x_ctrl, y_ctrl] = data
     opt_net = optimizers.Adam(learning_rate=1e-2)
     net2.compile_network(optim=opt_net, loss='categorical_crossentropy', metrics=['accuracy'])
-    net2.fit_network(x_train, y_train, validation=(x_ctrl, y_ctrl), batch_size=128, epochs=500, verbose=2)
+
+    if fit:
+        net2.fit_network(x_train, y_train, validation=(x_ctrl, y_ctrl), batch_size=128, epochs=500, verbose=2)
 
     if save is not None:
         net2.save(save)
@@ -140,11 +152,11 @@ def second_model(data, save=False):
 
 
 def main():
-    data_1 = data_loader('set_1')
-    first_model(data_1, save='model1.h5')
+    data_1 = data_loader('set_1', stand='normalize')
+    # first_model(data_1)
 
-    data_2 = data_loader('set_2')
-    second_model(data_2, save='model2.h5')
+    # data_2 = data_loader('set_2')
+    # second_model(data_2)
     return None
 
 
