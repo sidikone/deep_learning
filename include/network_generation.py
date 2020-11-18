@@ -123,7 +123,7 @@ def first_model(data, fit=False, save=False):
     if fit:
         net.fit_network(x_train, y_train, validation=(x_ctrl, y_ctrl), batch_size=128, epochs=500, verbose=2)
 
-    if save is not None:
+    if save is not False:
         net.save(save)
     return None
 
@@ -146,17 +146,17 @@ def second_model(data, fit=False, save=False):
     if fit:
         net2.fit_network(x_train, y_train, validation=(x_ctrl, y_ctrl), batch_size=128, epochs=500, verbose=2)
 
-    if save is not None:
+    if save is not False:
         net2.save(save)
     return None
 
 
 def main():
     data_1 = data_loader('set_1', stand='normalize')
-    # first_model(data_1)
-
-    # data_2 = data_loader('set_2')
-    # second_model(data_2)
+    first_model(data_1)
+    print('\n\n')
+    data_2 = data_loader('set_2')
+    second_model(data_2)
     return None
 
 
