@@ -54,16 +54,10 @@ class NeuralNetwork:
         self.neural_network.add(Flatten())
         return None
 
-    # def compile_network(self, optim, loss, metrics):
-    #     self.neural_network.compile(optimizer=optim,
-    #                                 loss=loss,
-    #                                 metrics=metrics)
-    #     return None
-
-    def compile_network(self, optim, loss, **kwargs):
-        print(kwargs)
+    def compile_network(self, optim, loss, metrics):
         self.neural_network.compile(optimizer=optim,
-                                    loss=loss,)
+                                    loss=loss,
+                                    metrics=metrics)
         return None
 
     def fit_network(self, x_train, y_train, validation, epochs, batch_size, verbose=0):
@@ -128,7 +122,7 @@ def first_model(data, fit=False, save=False):
     net.add_dense(nb=50, activation='relu')
     net.add_dense(nb=10, activation='softmax')
     opt_net = optimizers.Adam(learning_rate=1e-2)
-    net.compile_network(optim=opt_net)
+    net.compile_network(optim=opt_net, loss='categorical_crossentropy', metrics=['accuracy'])
     net.summary()
     [x_train, y_train, x_ctrl, y_ctrl] = data
 
