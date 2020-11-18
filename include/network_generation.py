@@ -79,26 +79,21 @@ class NeuralNetwork:
 
 
 def second_model(data, fit=False, save=False):
-    net2 = NeuralNetwork(name='2D_neural_network')
-    net2.add_input(nb_lines=10, nb_cols=10)
-    net2.add_conv1D(filter_nb=16, filter_siz=3, padding_type='same', activation='relu')
-    net2.add_pooling1D(typ='max', siz=2)
-    net2.add_conv1D(filter_nb=16, filter_siz=3, padding_type='same', activation='relu')
-    net2.add_pooling1D(typ='max', siz=2)
-    net2.add_flatten()
-    net2.add_dense(nb=10, activation='softmax')
-    net2.summary()
+    net = NeuralNetwork(name='2D_neural_network')
 
-    [x_train, y_train, x_ctrl, y_ctrl] = data
-    opt_net = optimizers.Adam(learning_rate=1e-2)
-    net2.compile_network(optim=opt_net)
-
-    if fit:
-        net2.fit_network(x_train, y_train, validation=(x_ctrl, y_ctrl), batch_size=128, epochs=500, verbose=2)
-
-    if save is not False:
-        net2.save(save)
-    return None
+    #     >>>>  Define your neural model using methods
+    #           --------------------------------------
+    net.add_input(nb_lines=10, nb_cols=10)
+    net.add_conv1D(filter_nb=16, filter_siz=3, padding_type='same', activation='relu')
+    net.add_pooling1D(typ='max', siz=2)
+    net.add_conv1D(filter_nb=16, filter_siz=3, padding_type='same', activation='relu')
+    net.add_pooling1D(typ='max', siz=2)
+    net.add_flatten()
+    net.add_dense(nb=10, activation='softmax')
+    net.summary()
+    #     >>>>  Go to parametrize your model
+    #           ----------------------------
+    return net
 
 
 def model_definition():
