@@ -54,10 +54,16 @@ class NeuralNetwork:
         self.neural_network.add(Flatten())
         return None
 
-    def compile_network(self, optim, loss, metrics):
+    # def compile_network(self, optim, loss, metrics):
+    #     self.neural_network.compile(optimizer=optim,
+    #                                 loss=loss,
+    #                                 metrics=metrics)
+    #     return None
+
+    def compile_network(self, optim, loss, **kwargs):
+        print(kwargs)
         self.neural_network.compile(optimizer=optim,
-                                    loss=loss,
-                                    metrics=metrics)
+                                    loss=loss,)
         return None
 
     def fit_network(self, x_train, y_train, validation, epochs, batch_size, verbose=0):
@@ -109,6 +115,12 @@ def data_loader(typ: str, stand=None) -> List:
     return [x_train, y_train, x_ctrl, y_ctrl]
 
 
+def parameters_fit(model, data, batch_size, epochs, verbose):
+    [x_train, y_train, x_ctrl, y_ctrl] = data
+    model.fit_network(x_train, y_train, validation=(x_ctrl, y_ctrl), batch_size=batch_size, epochs=epochs, verbose=verbose)
+    return None
+
+
 def first_model(data, fit=False, save=False):
     net = NeuralNetwork(name='1D_neural_network')
     net.add_input(nb_lines=100)
@@ -116,7 +128,7 @@ def first_model(data, fit=False, save=False):
     net.add_dense(nb=50, activation='relu')
     net.add_dense(nb=10, activation='softmax')
     opt_net = optimizers.Adam(learning_rate=1e-2)
-    net.compile_network(optim=opt_net, loss='categorical_crossentropy', metrics=['accuracy'])
+    net.compile_network(optim=opt_net)
     net.summary()
     [x_train, y_train, x_ctrl, y_ctrl] = data
 
@@ -141,7 +153,7 @@ def second_model(data, fit=False, save=False):
 
     [x_train, y_train, x_ctrl, y_ctrl] = data
     opt_net = optimizers.Adam(learning_rate=1e-2)
-    net2.compile_network(optim=opt_net, loss='categorical_crossentropy', metrics=['accuracy'])
+    net2.compile_network(optim=opt_net)
 
     if fit:
         net2.fit_network(x_train, y_train, validation=(x_ctrl, y_ctrl), batch_size=128, epochs=500, verbose=2)
@@ -154,9 +166,9 @@ def second_model(data, fit=False, save=False):
 def main():
     data_1 = data_loader('set_1', stand='normalize')
     first_model(data_1)
-    print('\n\n')
-    data_2 = data_loader('set_2')
-    second_model(data_2)
+    # print('\n\n')
+    # data_2 = data_loader('set_2')
+    # second_model(data_2)
     return None
 
 
