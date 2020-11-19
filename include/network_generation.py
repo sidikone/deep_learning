@@ -65,9 +65,13 @@ class NeuralNetwork:
                                 verbose=verbose)
         return None
 
-    def evaluate_network(self, x_test, y_test):
-        self.neural_network.evaluate(x_test, y_test)
+    def evaluate_network(self, x_test, y_test, batch_size=None, verbose=1):
+        self.neural_network.evaluate(x=x_test, y=y_test, batch_size=batch_size, verbose=verbose)
         return None
+
+    def predict_network(self, x_pred, batch_size=None, verbose=0):
+        data_out = self.neural_network.predict(x=x_pred, batch_size=batch_size, verbose=verbose)
+        return data_out
 
     def save(self, input_name):
         self.neural_network.save(filepath=input_name)
