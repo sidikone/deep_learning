@@ -1,4 +1,5 @@
 import os
+
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
 from tensorflow.keras import optimizers
@@ -8,6 +9,7 @@ from tensorflow.keras.layers import Conv1D, AveragePooling1D, MaxPooling1D
 
 from utils_ml import mean_center, normalization, data_loader
 from utils_ml import model_compilation, model_fit, set_compil_parameters, set_fit_parameters
+
 
 class NeuralNetwork:
     def __init__(self, name=None):
@@ -129,6 +131,16 @@ def data_filename():
     y_train = '../data/data_set_1/y_train.npy'
 
     x_ctrl = '../data/data_set_1/x_ctrl_1.npy'
+    y_ctrl = '../data/data_set_1/y_ctrl.npy'
+
+    return [x_train, y_train, x_ctrl, y_ctrl]
+
+
+def data_filename2():
+    x_train = '../data/data_set_1/x_train_2.npy'
+    y_train = '../data/data_set_1/y_train.npy'
+
+    x_ctrl = '../data/data_set_1/x_ctrl_2.npy'
     y_ctrl = '../data/data_set_1/y_ctrl.npy'
 
     return [x_train, y_train, x_ctrl, y_ctrl]
