@@ -4,6 +4,7 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 import tensorflow as tf
 import tensorflow.compat.v1 as v1
 import numpy as np
+from copy import deepcopy
 
 print(tf.__version__)
 
@@ -13,27 +14,16 @@ class TensflowNetwork:
     def __init__(self, name=None):
         self.network_name = name
         self.nb_unnamed_layer = 0
+        self.index_previous = 0
 
         self.layer_names = []
+        self.previous_network_state = None
+        self.actual_network_state = None
         self.no_layer = True
 
     @property
     def get_layer_names(self):
         return self.layer_names
-
-    @staticmethod
-    def add_input(nb_lines, nb_cols=None, typ=tf.float32, name=None):
-
-        typ_in = typ
-        name_in = name
-        if nb_cols is None:
-            shape_in = (nb_lines,)
-        else:
-            shape_in = (nb_lines, nb_cols)
-
-        input_def = v1.placeholder(dtyp=typ_in, shape=shape_in, name=name_in)
-
-        return input_def
 
     def _set_name_layer(self, name_in):
         # local_name = ''
@@ -73,10 +63,41 @@ class TensflowNetwork:
             else:
                 return z
 
-    # def add_dense(self,  nb, activation=None):
-    #
+    def add_input(self, nb_lines, nb_cols=None, typ=tf.float32, name='input'):
 
+        typ_in = typ
+        name_in = name
+        if nb_cols is None:
+            shape_in = (nb_lines,)
+        else:
+            shape_in = (nb_lines, nb_cols)
+
+        input_def = v1.placeholder(dtyp=typ_in, shape=shape_in, name=name_in)
+        self.previous_network_state = deepcopy(input_def)
+
+        return None
+
+    def update_previous_network_state_for_the_next_sate(self):
+
+        self.previous_network_state = deepcopy(self.actual_network_state)
+        return None
+
+    def add_dense(self, nb, activation=None, name=None):
+
+        local_name = self._set_name_layer(name_in=name)
+        with v1.name_scope(name=self.network_name):
+            self.actual_network_state = v1.layers.dense(inputs=self.previous_network_state,
+                                                        units=nb, name=local_name, activation=activation)
+        self.update_previous_network_state_for_the_next_sate()
+        return None
+
+    def add_output(self, nb, activation=None, name='outputs'):
+        local_name = name
+        with v1.name_scope(name=self.network_name):
+            self.actual_network_state = v1.layers.dense(inputs=self.previous_network_state,
+                                                        units=nb, name=local_name, activation=activation)
+        return None
 
 
 if __name__ == '__main__':
-    test = TensflowNetwork()
+    test = TensflowNetwork(name="1D_neural_network")

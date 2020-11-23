@@ -28,6 +28,10 @@ class KerasNetwork:
         self.neural_network.add(input_def)
         return None
 
+    def add_output(self, nb, activation=None):
+        self.add_dense(nb=nb, activation=activation)
+        return None
+
     def add_conv1D(self, filter_nb, filter_siz, padding_type='same', activation=None):
         input_def = Conv1D(filters=filter_nb,
                            kernel_size=filter_siz,
@@ -109,7 +113,7 @@ def model_definition():
     net.add_input(nb_lines=100)
     net.add_dense(nb=100, activation='relu')
     net.add_dense(nb=50, activation='relu')
-    net.add_dense(nb=10, activation='softmax')
+    net.add_output(nb=10, activation='softmax')
     net.summary()
 
     #     >>>>  Go to parametrize your model
