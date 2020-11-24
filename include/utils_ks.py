@@ -1,6 +1,47 @@
 import numpy as np
 from typing import List
 from tensorflow.keras.utils import to_categorical
+from tensorflow.keras import datasets
+
+
+def load_mnist():
+    return datasets.mnist.load_data()
+
+
+def load_fashion_mnist():
+    return datasets.fashion_mnist.load_data()
+
+
+def load_boston_housing():
+    return datasets.boston_housing.load_data()
+
+
+def load_cifar10():
+    return datasets.cifar10.load_data()
+
+
+def load_cifar100():
+    return datasets.cifar100.load_data()
+
+
+def load_reuters():
+    return datasets.reuters.load_data()
+
+
+def load_imdb():
+    return datasets.imdb.load_data()
+
+
+def load_dataset(name='mnist'):
+    data = {'mnist': load_mnist(),
+            'fashion_mnist': load_fashion_mnist(),
+            'boston_housing': load_boston_housing(),
+            'cifar10': load_cifar10(),
+            'cifar100': load_cifar100(),
+            'reuters': load_reuters(),
+            'imdb': load_imdb(),
+            }
+    return data.get(name)
 
 
 def normalization(data_in):
