@@ -6,8 +6,8 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Input, Dense, Flatten
 from tensorflow.keras.layers import Conv1D, AveragePooling1D, MaxPooling1D
 
-from utils_ml import mean_center, normalization, data_loader
-from utils_ml import model_compilation, model_fit, set_compil_parameters, set_fit_parameters
+from utils_ks import mean_center, normalization, data_loader
+from utils_ks import model_compilation, model_fit, set_compil_parameters, set_fit_parameters
 
 
 class KerasNetwork:
