@@ -1,20 +1,27 @@
 import os
+
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
 from tensorflow.keras import optimizers
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Input, Dense, Flatten
 from tensorflow.keras.layers import Conv1D, AveragePooling1D, MaxPooling1D
+from tensorflow.keras.layers import Conv2D, AveragePooling2D, MaxPooling2D, Convolution2D
+from tensorflow.keras.layers import Conv3D, AveragePooling3D, MaxPooling3D
 
-from utils_ks import mean_center, normalization, data_loader
+from utils_ks import data_loader
 from utils_ks import model_compilation, model_fit, set_compil_parameters, set_fit_parameters
 
 
-class KerasNetwork:
+def dense_layer_definition(nb, activation=None):
+    return Dense(units=nb, activation=activation)
+
+
+class DN_Keras:
     def __init__(self, name=None):
         self.neural_network = Sequential(name=name)
 
-    def add_input(self, nb_lines, nb_cols=None):
+    def add_input_layer(self, nb_lines, nb_cols=None):
         if nb_cols is None:
             input_def = Input(shape=(nb_lines,))
         else:
@@ -23,37 +30,15 @@ class KerasNetwork:
         self.neural_network.add(input_def)
         return None
 
-    def add_dense(self, nb, activation=None):
-        input_def = Dense(units=nb, activation=activation)
+    def add_dense_layer(self, nb, activation='relu'):
+        input_def = dense_layer_definition(nb=nb, activation=activation)
         self.neural_network.add(input_def)
         return None
 
-    def add_output(self, nb, activation=None):
-        self.add_dense(nb=nb, activation=activation)
+    def add_output_layer(self, nb, activation='softmax'):
+        self.add_dense_layer(nb=nb, activation=activation)
         return None
 
-    def add_conv1D(self, filter_nb, filter_siz, padding_type='same', activation=None):
-        input_def = Conv1D(filters=filter_nb,
-                           kernel_size=filter_siz,
-                           padding=padding_type,
-                           activation=activation)
-        self.neural_network.add(input_def)
-        return None
-
-    def add_pooling1D(self, typ='max', siz=2, padding='valid'):
-
-        if typ is 'max':
-            input_def = MaxPooling1D(pool_size=siz,
-                                     padding=padding)
-        elif typ is 'mean':
-            input_def = AveragePooling1D(pool_size=siz,
-                                         padding=padding)
-        self.neural_network.add(input_def)
-        return None
-
-    def add_flatten(self):
-        self.neural_network.add(Flatten())
-        return None
 
     def compile_network(self, optim, loss, metrics):
         self.neural_network.compile(optimizer=optim,
@@ -87,33 +72,92 @@ class KerasNetwork:
         return None
 
 
-def second_model(data, fit=False, save=False):
-    net = KerasNetwork(name='2D_neural_network')
+# def second_model(data, fit=False, save=False):
+#     net = MLP_KerasNetwork(name='2D_neural_network')
+#
+#     #     >>>>  Define your neural model using methods
+#     #           --------------------------------------
+#     net.add_input_layer(nb_lines=10, nb_cols=10)
+#     net.add_conv1D(filter_nb=16, filter_siz=3, padding_type='same', activation='relu')
+#     net.add_pooling1D(typ='max', siz=2)
+#     net.add_conv1D(filter_nb=16, filter_siz=3, padding_type='same', activation='relu')
+#     net.add_pooling1D(typ='max', siz=2)
+#     net.add_flatten()
+#     net.add_hidden_layer(nb=10, activation='softmax')
+#     net.summary()
+#     #     >>>>  Go to parametrize your model
+#     #           ----------------------------
+#     return net
 
-    #     >>>>  Define your neural model using methods
-    #           --------------------------------------
-    net.add_input(nb_lines=10, nb_cols=10)
-    net.add_conv1D(filter_nb=16, filter_siz=3, padding_type='same', activation='relu')
-    net.add_pooling1D(typ='max', siz=2)
-    net.add_conv1D(filter_nb=16, filter_siz=3, padding_type='same', activation='relu')
-    net.add_pooling1D(typ='max', siz=2)
-    net.add_flatten()
-    net.add_dense(nb=10, activation='softmax')
-    net.summary()
-    #     >>>>  Go to parametrize your model
-    #           ----------------------------
-    return net
+class CNN_1D_Keras:
+
+    def __init__(self, name=None):
+        self.neural_network = Sequential(name=name)
+
+
+class CNN_2D_Keras:
+
+    def __init__(self, name=None):
+        self.neural_network = Sequential(name=name)
+
+    def add_input_layer(self, shape=None, batch_size=None, dtype=None, name=None):
+        input_def = Input(shape=shape, batch_size=batch_size, dtype=dtype, name=name)
+
+        self.neural_network.add(input_def)
+        return None
+
+    def add_conv_layer(self, filters, kernel_size, strides=(1, 1), padding=None, activation='relu'):
+        input_def = Conv2D(filters=filters, kernel_size=kernel_size,
+                           strides=strides, padding=padding, activation=activation)
+
+        self.neural_network.add(input_def)
+        return None
+
+    def add_pooling_layer(self, pool_size=(2, 2), strides=None, padding='valid', dtype='max'):
+        input_def = None
+
+        if dtype is 'max':
+            input_def = MaxPooling2D(pool_size=pool_size, strides=strides, padding=padding)
+        elif dtype is 'mean':
+            input_def = AveragePooling2D(pool_size=pool_size, strides=strides, padding=padding)
+
+        self.neural_network(input_def)
+        return None
+
+    def add_flatten(self):
+        input_def = Flatten()
+        self.neural_network(input_def)
+        return None
+
+    def add_dense_layer(self, nb, activation='relu'):
+        input_def = dense_layer_definition(nb=nb, activation=activation)
+        self.neural_network.add(input_def)
+        return None
+
+    def add_output_layer(self, nb, activation='softmax'):
+        self.add_dense_layer(nb=nb, activation=activation)
+        return None
+
+    def summary(self):
+        self.neural_network.summary()
+        return None
+
+
+class CNN_3D_Keras:
+
+    def __init__(self, name=None):
+        self.neural_network = Sequential(name=name)
 
 
 def model_definition():
-    net = KerasNetwork(name='1D_neural_network')
+    net = DN_Keras(name='1D_neural_network')
 
     #     >>>>  Define your neural model using methods
     #           --------------------------------------
-    net.add_input(nb_lines=100)
-    net.add_dense(nb=100, activation='relu')
-    net.add_dense(nb=50, activation='relu')
-    net.add_output(nb=10, activation='softmax')
+    net.add_input_layer(nb_lines=100)
+    net.add_dense_layer(nb=100, activation='relu')
+    net.add_dense_layer(nb=50, activation='relu')
+    net.add_output_layer(nb=10, activation='softmax')
     net.summary()
 
     #     >>>>  Go to parametrize your model
