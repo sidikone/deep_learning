@@ -97,7 +97,7 @@ def set_compil_parameters(optim, loss, metrics):
 
 def parameters_compil(model, compil_vars):
     [optim_in, loss_in, metrics_in] = compil_vars
-    model.compile_network(optim=optim_in, loss=loss_in, metrics=metrics_in)
+    model.compile_network(optimizer=optim_in, loss=loss_in, metrics=metrics_in)
     return None
 
 
