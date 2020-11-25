@@ -2,6 +2,7 @@ import numpy as np
 from typing import List
 from tensorflow.keras.utils import to_categorical
 from tensorflow.keras import datasets
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 
 def load_mnist():
@@ -50,6 +51,12 @@ def normalization(data_in):
 
 def mean_center(data_in):
     return data_in - np.mean(data_in)
+
+
+def image_dataset_augmentation(data, rotation_range, width_shift_range, height_shift_range, zoom_range):
+    gen = ImageDataGenerator(rotation_range=rotation_range, width_shift_range=width_shift_range,
+                             height_shift_range=height_shift_range, zoom_range=zoom_range)
+    return gen.fit(data)
 
 
 def data_loader(filename, norm=True, center=True) -> List:

@@ -45,7 +45,7 @@ def _summary(obj):
 # def fit_network(obj, )
 
 
-class DN_Keras:
+class MLP_Keras:
     def __init__(self, name=None):
         self.neural_network = Sequential(name=name)
 
@@ -314,7 +314,7 @@ class CNN_3D_Keras:
 
 
 def model_definition():
-    net = DN_Keras(name='1D_neural_network')
+    net = MLP_Keras(name='1D_neural_network')
 
     #     >>>>  Define your neural model using methods
     #           --------------------------------------
