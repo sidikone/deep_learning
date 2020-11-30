@@ -1,8 +1,9 @@
-import numpy as np
 from typing import List
-from tensorflow.keras.utils import to_categorical
+
+import numpy as np
 from tensorflow.keras import datasets
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from tensorflow.keras.utils import to_categorical
 
 
 def load_mnist():
@@ -33,15 +34,16 @@ def load_imdb():
     return datasets.imdb.load_data()
 
 
-def load_dataset(name='mnist'):
-    data = {'mnist': load_mnist(),
-            'fashion_mnist': load_fashion_mnist(),
-            'boston_housing': load_boston_housing(),
-            'cifar10': load_cifar10(),
-            'cifar100': load_cifar100(),
-            'reuters': load_reuters(),
-            'imdb': load_imdb(),
-            }
+def load_dataset(name="mnist"):
+    data = {
+        "mnist": load_mnist(),
+        "fashion_mnist": load_fashion_mnist(),
+        "boston_housing": load_boston_housing(),
+        "cifar10": load_cifar10(),
+        "cifar100": load_cifar100(),
+        "reuters": load_reuters(),
+        "imdb": load_imdb(),
+    }
     return data.get(name)
 
 
@@ -53,9 +55,15 @@ def mean_center(data_in):
     return data_in - np.mean(data_in)
 
 
-def image_dataset_augmentation(data, rotation_range, width_shift_range, height_shift_range, zoom_range):
-    gen = ImageDataGenerator(rotation_range=rotation_range, width_shift_range=width_shift_range,
-                             height_shift_range=height_shift_range, zoom_range=zoom_range)
+def image_dataset_augmentation(
+    data, rotation_range, width_shift_range, height_shift_range, zoom_range
+):
+    gen = ImageDataGenerator(
+        rotation_range=rotation_range,
+        width_shift_range=width_shift_range,
+        height_shift_range=height_shift_range,
+        zoom_range=zoom_range,
+    )
     return gen.fit(data)
 
 
@@ -88,11 +96,14 @@ def parameters_fit(model, data, fit_vars, fit_in, save_in):
     if fit_in:
         [x_train, y_train, x_ctrl, y_ctrl] = data
         [batch_size, epochs, verbose] = fit_vars
-        model.fit_network(x_train, y_train,
-                          validation=(x_ctrl, y_ctrl),
-                          batch_size=batch_size,
-                          epochs=epochs,
-                          verbose=verbose)
+        model.fit_network(
+            x_train,
+            y_train,
+            validation=(x_ctrl, y_ctrl),
+            batch_size=batch_size,
+            epochs=epochs,
+            verbose=verbose,
+        )
     if save_in:
         model.save(save_in)
     return None
@@ -114,5 +125,7 @@ def model_compilation(model, parameters):
 
 
 def model_fit(data, model, parameters, fit=True, save=False):
-    parameters_fit(model=model, data=data, fit_vars=parameters, fit_in=fit, save_in=save)
+    parameters_fit(
+        model=model, data=data, fit_vars=parameters, fit_in=fit, save_in=save
+    )
     return None
