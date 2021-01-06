@@ -48,7 +48,7 @@ class DataSets:
         ind = 0
         if self.__is_an_image:
             plt.title('label : {}'.format(local_label[ind]))
-            plt.imshow(local_data[ind])
+            plt.imshow(local_data[ind], cmap="gray")
             plt.axis('off')
             plt.show()
             print("yolo")
