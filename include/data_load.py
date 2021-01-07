@@ -1,5 +1,6 @@
 from tensorflow.keras import datasets
-import matplotlib.pyplot as plt
+from matplotlib import pyplot as plt
+from numpy import ndarray
 
 
 class DataSets:
@@ -43,14 +44,38 @@ class DataSets:
     def get_test_data(self):
         return self.__test_data_set
 
-    def show_sample(self, nb=3):
+    def show_sample(self, start=0, nb=3):
         local_data, local_label = self.__train_data_set
-        ind = 0
+        local_data = local_data[start:]
+        local_label = local_label[start:]
+
         if self.__is_an_image:
-            plt.title('label : {}'.format(local_label[ind]))
-            plt.imshow(local_data[ind], cmap="gray")
-            plt.axis('off')
+            self.__display_images(data=local_data, label=local_label, nb=nb)
+
+            # max_col_size = 6
+            # if nb < max_col_size:
+            #     print("Cas n°1")
+            #
+            # else:
+            #     print("Cas n°2")
+
+            # plt.title('label : {}'.format(local_label[ind]))
+            # plt.imshow(local_data[ind], cmap="gray")
+            # plt.axis('off')
+            # plt.show()
+            # print("yolo")
+
+    @staticmethod
+    def __display_images(data: ndarray, label: ndarray, nb: int = 0) -> None:
+        max_col_size = 6
+        if nb < max_col_size:
+            fig, axes = plt.subplots(1, nb)
+            ax = axes.ravel()
+            for ind in range(nb):
+                ax[ind].imshow(data[ind], cmap="gray")
+                ax[ind].set_title('{}'.format(label[ind]))
+                ax[ind].axis('off')
             plt.show()
-            print("yolo")
 
-
+        else:
+            print("Cas n°2")
