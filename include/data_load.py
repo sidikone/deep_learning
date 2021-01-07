@@ -36,7 +36,7 @@ class DataSets:
             new_labels.append(authentic_ref[elt])
         return array(new_labels)
 
-    def load_iris(self, split : float) -> None:
+    def load_iris(self, split: float = .7) -> None:
         self.__is_a_table = True
         data_sets = load_iris()
 
