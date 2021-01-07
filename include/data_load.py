@@ -1,6 +1,7 @@
 from tensorflow.keras import datasets
 from matplotlib import pyplot as plt
-from numpy import ndarray, zeros, ones, uint8, array
+from pandas import DataFrame, concat
+from numpy import ndarray, array
 
 
 class DataSets:
@@ -22,17 +23,28 @@ class DataSets:
         self.__authentic_label = ["T-shirt/top", "Trouser", "Pullover", "Dress", "Coat",
                                   "Sandal", "Shirt", "Sneaker", "Bag", "Ankle boot"]
 
-    def __redefine_label(self, actual, authentic_ref) -> ndarray:
+    def __authentic_boston_housing_label(self):
+        self.__authentic_label = ["CRIM", "ZN", "INDUS", "CHAS", "NOX",
+                                  "RM", "AGE", "DIS", "RAD", "TAX",
+                                  "PTRATIO", "B -1000", "LSTAT", "MEDV (label)"]
+
+    @staticmethod
+    def __redefine_label(actual, authentic_ref) -> ndarray:
         new_labels = []
         for elt in actual:
             new_labels.append(authentic_ref[elt])
         return array(new_labels)
 
+    def load_boston_housing(self) -> None:
+        self.__is_a_table = True
+        self.__raw_data = datasets.boston_housing.load_data()
+        self.__train_data_set, self.__test_data_set = self.__raw_data
+        self.__authentic_boston_housing_label()
+
     def load_mnist(self) -> None:
         self.__is_an_image = True
         self.__raw_data = datasets.mnist.load_data()
         self.__train_data_set, self.__test_data_set = self.__raw_data
-        return None
 
     def load_fashion_mnist(self) -> None:
         self.__is_an_image = True
@@ -59,7 +71,7 @@ class DataSets:
     def get_test_data(self):
         return self.__test_data_set
 
-    def show_sample(self, start: int = 0, nb: int = 3):
+    def show_sample(self, start: int = 0, nb: int = 3) -> None:
         local_data, local_label = self.__train_data_set
         local_data = local_data[start:nb]
         local_label = local_label[start:nb]
@@ -69,6 +81,9 @@ class DataSets:
 
         if self.__is_an_image:
             self.__display_images(data=local_data, label=local_label, nb=nb)
+
+        if self.__is_a_table:
+            self.__display_table(data=local_data, label=local_label, nb=nb)
 
     def __display_images(self, data: ndarray, label: ndarray, nb: int = 0) -> None:
         max_col_size = 6
@@ -113,3 +128,10 @@ class DataSets:
                         axes[line, col].set_title('{}'.format(" "))
                         axes[line, col].axis('off')
             plt.show()
+
+    def __display_table(self, data: ndarray, label: ndarray, nb: int = 0) -> None:
+
+        data_df = DataFrame(data, columns=self.__authentic_label[:-1])
+        label_df = DataFrame(label, columns=[self.__authentic_label[-1]])
+        final_df = concat([data_df, label_df], axis=1)
+        print(final_df.head(nb))
