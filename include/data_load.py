@@ -1,4 +1,5 @@
 from tensorflow.keras import datasets
+from sklearn.datasets import load_iris, load_breast_cancer, load_wine, load_boston
 from matplotlib import pyplot as plt
 from pandas import DataFrame, concat
 from numpy import ndarray, array
@@ -35,6 +36,16 @@ class DataSets:
             new_labels.append(authentic_ref[elt])
         return array(new_labels)
 
+    def load_iris(self, split : float) -> None:
+        self.__is_a_table = True
+        data_sets = load_iris()
+
+        # ['data', 'target', 'frame', 'target_names', 'DESCR', 'feature_names', 'filename']
+        data_keys = list(data_sets.keys())
+        self.__raw_data = tuple([data_sets.get('data'), data_sets.get('target')])
+
+        print(data_keys)
+
     def load_boston_housing(self) -> None:
         self.__is_a_table = True
         self.__raw_data = datasets.boston_housing.load_data()
@@ -70,6 +81,9 @@ class DataSets:
 
     def get_test_data(self):
         return self.__test_data_set
+
+    def get_authentic_label(self):
+        return self.__authentic_label
 
     def show_sample(self, start: int = 0, nb: int = 3) -> None:
         local_data, local_label = self.__train_data_set
