@@ -1,6 +1,6 @@
 from tensorflow.keras import datasets
 from matplotlib import pyplot as plt
-from numpy import ndarray
+from numpy import ndarray, zeros, ones, uint8
 
 
 class DataSets:
@@ -44,26 +44,13 @@ class DataSets:
     def get_test_data(self):
         return self.__test_data_set
 
-    def show_sample(self, start=0, nb=3):
+    def show_sample(self, start: int = 0, nb: int = 3):
         local_data, local_label = self.__train_data_set
         local_data = local_data[start:]
         local_label = local_label[start:]
 
         if self.__is_an_image:
             self.__display_images(data=local_data, label=local_label, nb=nb)
-
-            # max_col_size = 6
-            # if nb < max_col_size:
-            #     print("Cas n°1")
-            #
-            # else:
-            #     print("Cas n°2")
-
-            # plt.title('label : {}'.format(local_label[ind]))
-            # plt.imshow(local_data[ind], cmap="gray")
-            # plt.axis('off')
-            # plt.show()
-            # print("yolo")
 
     @staticmethod
     def __display_images(data: ndarray, label: ndarray, nb: int = 0) -> None:
@@ -78,4 +65,29 @@ class DataSets:
             plt.show()
 
         else:
-            print("Cas n°2")
+            nb_line = nb // max_col_size
+            nb_elt_last_line = nb % max_col_size
+
+            if nb_elt_last_line is 0:
+                max_line_size = nb_line
+            else:
+                max_line_size = nb_line + 1
+
+            fig, axes = plt.subplots(max_line_size, max_col_size)
+            data_ind = 0
+            for line in range(max_line_size):
+                for col in range(max_col_size):
+
+                    if data_ind < nb:
+                        axes[line, col].imshow(data[data_ind], cmap="gray")
+                        axes[line, col].set_title('{}'.format(label[data_ind]))
+                        axes[line, col].axis('off')
+                        data_ind += 1
+
+                    else:
+                        axes[line, col].set_title('{}'.format(" "))
+                        axes[line, col].axis('off')
+
+
+            plt.show()
+
