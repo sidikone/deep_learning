@@ -1,5 +1,6 @@
 from tensorflow.keras import datasets
 from sklearn.datasets import load_iris, load_breast_cancer, load_wine, load_boston
+from sklearn.model_selection import train_test_split
 from matplotlib import pyplot as plt
 from pandas import DataFrame, concat
 from numpy import ndarray, array
@@ -11,7 +12,11 @@ class DataSets:
         self.__raw_data = None
         self.__train_data_set = None
         self.__test_data_set = None
-        self.__frame_data = None
+
+        self.__feature_names = None
+        self.__target_names = None
+
+        self.__frame_column_names = None        # only for table
         self.__sample_data = None
         self.__info = None
         self.__authentic_label = None
@@ -20,14 +25,20 @@ class DataSets:
         self.__is_a_table = False
         self.__is_authentic_label = True
 
-    def __authentic_fashion_mnist_label(self):
+    def __set_authentic_fashion_mnist_label(self):
         self.__authentic_label = ["T-shirt/top", "Trouser", "Pullover", "Dress", "Coat",
                                   "Sandal", "Shirt", "Sneaker", "Bag", "Ankle boot"]
 
-    def __authentic_boston_housing_label(self):
+    def __set_authentic_boston_housing_label(self):
         self.__authentic_label = ["CRIM", "ZN", "INDUS", "CHAS", "NOX",
                                   "RM", "AGE", "DIS", "RAD", "TAX",
                                   "PTRATIO", "B -1000", "LSTAT", "MEDV (label)"]
+
+    def __set_authentic_iris_label(self):
+        self.__authentic_label = list(self.__target_names)
+
+    def __set_column_names_iris_label(self):
+        self.__frame_column_names = list(self.__feature_names) + ["plant species (label)"]
 
     @staticmethod
     def __redefine_label(actual, authentic_ref) -> ndarray:
@@ -36,21 +47,30 @@ class DataSets:
             new_labels.append(authentic_ref[elt])
         return array(new_labels)
 
-    def load_iris(self, split: float = .7) -> None:
+    def load_iris_dataset(self, train_size: float = .75) -> None:
         self.__is_a_table = True
+        self.__is_authentic_label = False
+
         data_sets = load_iris()
-
+        # data_keys = list(data_sets.keys())
         # ['data', 'target', 'frame', 'target_names', 'DESCR', 'feature_names', 'filename']
-        data_keys = list(data_sets.keys())
         self.__raw_data = tuple([data_sets.get('data'), data_sets.get('target')])
+        data_train, data_test, target_train, target_test = train_test_split(data_sets.get('data'),
+                                                                            data_sets.get('target'),
+                                                                            train_size=train_size)
+        self.__train_data_set = tuple([data_train, target_train])
+        self.__test_data_set = tuple([data_test, target_test])
 
-        print(data_keys)
+        self.__feature_names = data_sets.get('feature_names')
+        self.__target_names = data_sets.get('target_names')
+        self.__set_authentic_iris_label()
+        self.__set_column_names_iris_label()
 
     def load_boston_housing(self) -> None:
         self.__is_a_table = True
         self.__raw_data = datasets.boston_housing.load_data()
         self.__train_data_set, self.__test_data_set = self.__raw_data
-        self.__authentic_boston_housing_label()
+        self.__set_authentic_boston_housing_label()
 
     def load_mnist(self) -> None:
         self.__is_an_image = True
@@ -63,7 +83,7 @@ class DataSets:
 
         self.__raw_data = datasets.fashion_mnist.load_data()
         self.__train_data_set, self.__test_data_set = self.__raw_data
-        self.__authentic_fashion_mnist_label()
+        self.__set_authentic_fashion_mnist_label()
 
     def load_cifar10(self):
         self.__raw_data = datasets.cifar10.load_data()
@@ -81,6 +101,12 @@ class DataSets:
 
     def get_test_data(self):
         return self.__test_data_set
+
+    def get_feature_names(self):
+        return self.__feature_names
+
+    def get_target_names(self):
+        return self.__target_names
 
     def get_authentic_label(self):
         return self.__authentic_label
@@ -145,7 +171,7 @@ class DataSets:
 
     def __display_table(self, data: ndarray, label: ndarray, nb: int = 0) -> None:
 
-        data_df = DataFrame(data, columns=self.__authentic_label[:-1])
-        label_df = DataFrame(label, columns=[self.__authentic_label[-1]])
+        data_df = DataFrame(data, columns=self.__frame_column_names[:-1])
+        label_df = DataFrame(label, columns=[self.__frame_column_names[-1]])
         final_df = concat([data_df, label_df], axis=1)
         print(final_df.head(nb))
