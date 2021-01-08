@@ -46,6 +46,12 @@ class DataSets:
     def __set_column_names_breast_cancer_label(self):
         self.__frame_column_names = list(self.__feature_names) + ["type of cancer (label)"]
 
+    def __set_authentic_wine_label(self):
+        self.__authentic_label = list(self.__target_names)
+
+    def __set_column_names_wine_label(self):
+        self.__frame_column_names = list(self.__feature_names) + ["class of wine (label)"]
+
     @staticmethod
     def __redefine_label(actual, authentic_ref) -> ndarray:
         new_labels = []
@@ -91,6 +97,26 @@ class DataSets:
         self.__target_names = data_sets.get('target_names')
         self.__set_authentic_breast_cancer_label()
         self.__set_column_names_breast_cancer_label()
+
+    def load_wine_dataset(self, train_size: float = .75) -> None:
+        self.__is_a_table = True
+        self.__is_authentic_label = False
+
+        data_sets = load_wine()
+        # data_keys = list(data_sets.keys())
+        # ['data', 'target', 'frame', 'target_names', 'DESCR', 'feature_names']
+
+        self.__raw_data = tuple([data_sets.get('data'), data_sets.get('target')])
+        data_train, data_test, target_train, target_test = train_test_split(data_sets.get('data'),
+                                                                            data_sets.get('target'),
+                                                                            train_size=train_size)
+        self.__train_data_set = tuple([data_train, target_train])
+        self.__test_data_set = tuple([data_test, target_test])
+
+        self.__feature_names = data_sets.get('feature_names')
+        self.__target_names = data_sets.get('target_names')
+        self.__set_authentic_wine_label()
+        self.__set_column_names_wine_label()
 
     def load_boston_housing(self) -> None:
         self.__is_a_table = True
