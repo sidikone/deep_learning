@@ -1,5 +1,5 @@
 from tensorflow.keras import datasets
-from sklearn.datasets import load_iris, load_breast_cancer, load_wine, load_boston
+from sklearn.datasets import load_iris, load_breast_cancer, load_wine, load_boston, load_diabetes
 from sklearn.model_selection import train_test_split
 from matplotlib import pyplot as plt
 from pandas import DataFrame, concat
@@ -50,6 +50,9 @@ class DataSets:
     def __set_column_names_boston_label(self):
         self.__frame_column_names = list(self.__feature_names) + ["MEDV (label)"]
 
+    def __set_column_names_diabetes_label(self):
+        self.__frame_column_names = list(self.__feature_names) + ["Glucose rate (label)"]
+
     @staticmethod
     def __redefine_label(actual, authentic_ref) -> ndarray:
         new_labels = []
@@ -96,6 +99,24 @@ class DataSets:
         self.__set_authentic_breast_cancer_label()
         self.__set_column_names_breast_cancer_label()
 
+    def load_diabetes_dataset(self, train_size: float = .75) -> None:
+        self.__is_a_table = True
+
+        data_sets = load_diabetes()
+        # data_keys = list(data_sets.keys())
+        # ['data', 'target', 'frame', 'DESCR', 'feature_names', 'data_filename', 'target_filename']
+
+        self.__raw_data = tuple([data_sets.get('data'), data_sets.get('target')])
+        data_train, data_test, target_train, target_test = train_test_split(data_sets.get('data'),
+                                                                            data_sets.get('target'),
+                                                                            train_size=train_size)
+        self.__train_data_set = tuple([data_train, target_train])
+        self.__test_data_set = tuple([data_test, target_test])
+
+        self.__feature_names = data_sets.get('feature_names')
+        self.__target_names = array(["Glucose rate (label)"])
+        self.__set_column_names_diabetes_label()
+
     def load_wine_dataset(self, train_size: float = .75) -> None:
         self.__is_a_table = True
         self.__is_authentic_label = False
@@ -118,7 +139,6 @@ class DataSets:
 
     def load_boston_housing_dataset(self, train_size: float = .75) -> None:
         self.__is_a_table = True
-        # self.__is_authentic_label = False
 
         data_sets = load_boston()
         # data_keys = list(data_sets.keys())
