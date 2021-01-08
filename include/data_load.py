@@ -19,7 +19,7 @@ class DataSets:
         self.__frame_column_names = None        # only for table
         self.__sample_data = None
         self.__info = None
-        self.__authentic_label = None
+        self.__authentic_label = None           # only if label are not authentic
 
         self.__is_an_image = False
         self.__is_a_table = False
@@ -28,11 +28,6 @@ class DataSets:
     def __set_authentic_fashion_mnist_label(self):
         self.__authentic_label = ["T-shirt/top", "Trouser", "Pullover", "Dress", "Coat",
                                   "Sandal", "Shirt", "Sneaker", "Bag", "Ankle boot"]
-
-    def __set_authentic_boston_housing_label(self):
-        self.__authentic_label = ["CRIM", "ZN", "INDUS", "CHAS", "NOX",
-                                  "RM", "AGE", "DIS", "RAD", "TAX",
-                                  "PTRATIO", "B -1000", "LSTAT", "MEDV (label)"]
 
     def __set_authentic_iris_label(self):
         self.__authentic_label = list(self.__target_names)
@@ -51,6 +46,9 @@ class DataSets:
 
     def __set_column_names_wine_label(self):
         self.__frame_column_names = list(self.__feature_names) + ["class of wine (label)"]
+
+    def __set_column_names_boston_label(self):
+        self.__frame_column_names = list(self.__feature_names) + ["MEDV (label)"]
 
     @staticmethod
     def __redefine_label(actual, authentic_ref) -> ndarray:
@@ -118,11 +116,24 @@ class DataSets:
         self.__set_authentic_wine_label()
         self.__set_column_names_wine_label()
 
-    def load_boston_housing(self) -> None:
+    def load_boston_housing_dataset(self, train_size: float = .75) -> None:
         self.__is_a_table = True
-        self.__raw_data = datasets.boston_housing.load_data()
-        self.__train_data_set, self.__test_data_set = self.__raw_data
-        self.__set_authentic_boston_housing_label()
+        # self.__is_authentic_label = False
+
+        data_sets = load_boston()
+        # data_keys = list(data_sets.keys())
+        # ['data', 'target', 'feature_names', 'DESCR', 'filename']
+
+        self.__raw_data = tuple([data_sets.get('data'), data_sets.get('target')])
+        data_train, data_test, target_train, target_test = train_test_split(data_sets.get('data'),
+                                                                            data_sets.get('target'),
+                                                                            train_size=train_size)
+        self.__train_data_set = tuple([data_train, target_train])
+        self.__test_data_set = tuple([data_test, target_test])
+
+        self.__feature_names = data_sets.get('feature_names')
+        self.__target_names = array(["MEDV"])
+        self.__set_column_names_boston_label()
 
     def load_mnist(self) -> None:
         self.__is_an_image = True
