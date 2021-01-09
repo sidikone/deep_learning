@@ -41,6 +41,13 @@ class Regression:
     def set_logistic_parameters(self, balance=1):
         self.__model = LogisticRegression(C=balance)
 
+    def fit(self, train_data,  target_data):
+        self.__model.fit(train_data,  target_data)
+
+    def predict(self, data):
+        self.__model.predict(data)
+
+
 
 # class LogisticRegression:
 #     def __init__(self):
