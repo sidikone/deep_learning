@@ -1,16 +1,16 @@
-# This is a sample Python script.
-
-# Press Maj+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+from include.data_load import DataSets
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+def main() -> None:
+    datasets_obj = DataSets()
+    datasets_obj.load_diabetes_dataset()
+
+    train_data, train_label = datasets_obj.get_train_data()
+    test_data, test_label = datasets_obj.get_test_data()
+    datasets_obj.show_sample(nb=5)
 
 
-# Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    print_hi('PyCharm')
+    main()
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/

@@ -1,33 +1,26 @@
-import os
-
-os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
 from tensorflow import float32 as ft_32
 from tensorflow.keras import optimizers
 from tensorflow.keras.layers import (
     AveragePooling1D,
     AveragePooling2D,
-    AveragePooling3D,
     Conv1D,
     Conv2D,
-    Conv3D,
-    Convolution2D,
     Dense,
     Flatten,
     Dropout,
     Input,
     MaxPooling1D,
-    MaxPooling2D,
-    MaxPooling3D,
-)
+    MaxPooling2D, )
 from tensorflow.keras.models import Model, Sequential
-
 from utils_ks import (
     data_loader,
     model_compilation,
     model_fit,
     set_compil_parameters,
-    set_fit_parameters,
-)
+    set_fit_parameters, )
+
+import os
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
 
 
 def _dense_layer_definition(nb, activation=None):
@@ -174,7 +167,7 @@ class CNN_1D_Keras:
         return None
 
     def add_conv_layer(
-        self, filters, kernel_size, strides=1, padding="valid", activation="relu"
+            self, filters, kernel_size, strides=1, padding="valid", activation="relu"
     ):
         input_def = Conv1D(
             filters=filters,
@@ -188,7 +181,7 @@ class CNN_1D_Keras:
         return None
 
     def add_pooling_layer(
-        self, pool_size=2, strides=None, padding="valid", dtype="max"
+            self, pool_size=2, strides=None, padding="valid", dtype="max"
     ):
         input_def = None
 
@@ -276,7 +269,7 @@ class CNN_2D_Keras:
         return None
 
     def add_conv_layer(
-        self, filters, kernel_size, strides=(1, 1), padding="valid", activation="relu"
+            self, filters, kernel_size, strides=(1, 1), padding="valid", activation="relu"
     ):
         input_def = Conv2D(
             filters=filters,
@@ -290,7 +283,7 @@ class CNN_2D_Keras:
         return None
 
     def add_pooling_layer(
-        self, pool_size=(2, 2), strides=None, padding="valid", dtype="max"
+            self, pool_size=(2, 2), strides=None, padding="valid", dtype="max"
     ):
         input_def = None
 
@@ -380,7 +373,6 @@ class GAN_MLP_Keras:
         # self.descriptor_nn = Sequential(name=self.descriptor_name)
 
     def __build_gan_design(self):
-
         self.discriminator_nn.trainable = False
         self.neural_network = Model(
             inputs=self.generator_nn, outputs=self.discriminator_nn
@@ -431,8 +423,6 @@ def model_definition():
     net.add_dropout_layer(rate=0.2)
     net.add_output_layer(nb=10, activation="softmax")
     net.summary()
-
-    net2 = GAN_MLP_Keras(name="GAN")
 
     #     >>>>  Go to parametrize your model
     #           ----------------------------

@@ -15,7 +15,13 @@ def load_fashion_mnist():
 
 
 def load_boston_housing():
-    return datasets.boston_housing.load_data()
+    x_features = ["CRIME", "ZN", "INDUS", "CHAS", "NOX",
+                  "RM", "AGE", "DIS", "RAD", "TAX",
+                  "PTRATIO", "B", "LSTAT"]
+    y_features = ["MEDV"]
+
+    (x_train, y_train), (x_test, y_test) = datasets.boston_housing.load_data()
+    return (x_train, y_train), (x_test, y_test), (x_features, y_features)
 
 
 def load_cifar10():
@@ -56,7 +62,7 @@ def mean_center(data_in):
 
 
 def image_dataset_augmentation(
-    data, rotation_range, width_shift_range, height_shift_range, zoom_range
+        data, rotation_range, width_shift_range, height_shift_range, zoom_range
 ):
     gen = ImageDataGenerator(
         rotation_range=rotation_range,

@@ -1,25 +1,26 @@
 from tensorflow.keras import datasets
-from sklearn.datasets import load_iris, load_breast_cancer, load_wine, load_boston, load_diabetes
+from sklearn.datasets import load_iris, load_breast_cancer, load_wine, load_boston, load_diabetes, load_digits
 from sklearn.model_selection import train_test_split
 from matplotlib import pyplot as plt
 from pandas import DataFrame, concat
-from numpy import ndarray, array
+from numpy import ndarray, array, concatenate
 
 
 class DataSets:
 
     def __init__(self):
-        self.__raw_data = None
+        self.__raw_data_tensor_flow = None
         self.__train_data_set = None
         self.__test_data_set = None
+        self.__validation_data_set = None
 
         self.__feature_names = None
         self.__target_names = None
 
-        self.__frame_column_names = None        # only for table
+        self.__frame_column_names = None  # only for table
         self.__sample_data = None
         self.__info = None
-        self.__authentic_label = None           # only if label are not authentic
+        self.__authentic_label = None  # only if label are not authentic
 
         self.__is_an_image = False
         self.__is_a_table = False
@@ -28,6 +29,12 @@ class DataSets:
     def __set_authentic_fashion_mnist_label(self):
         self.__authentic_label = ["T-shirt/top", "Trouser", "Pullover", "Dress", "Coat",
                                   "Sandal", "Shirt", "Sneaker", "Bag", "Ankle boot"]
+        self.__target_names = self.__authentic_label
+
+    def __set_authentic_cifar10_label(self):
+        self.__authentic_label = ["airplane", "automobile", "bird", "cat", "deer",
+                                  "dog", "frog", "horse", "ship", "truck"]
+        self.__target_names = self.__authentic_label
 
     def __set_authentic_iris_label(self):
         self.__authentic_label = list(self.__target_names)
@@ -67,7 +74,7 @@ class DataSets:
         data_sets = load_iris()
         # data_keys = list(data_sets.keys())
         # ['data', 'target', 'frame', 'target_names', 'DESCR', 'feature_names', 'filename']
-        self.__raw_data = tuple([data_sets.get('data'), data_sets.get('target')])
+        self.__raw_data_tensor_flow = tuple([data_sets.get('data'), data_sets.get('target')])
         data_train, data_test, target_train, target_test = train_test_split(data_sets.get('data'),
                                                                             data_sets.get('target'),
                                                                             train_size=train_size)
@@ -87,7 +94,7 @@ class DataSets:
         # data_keys = list(data_sets.keys())
         # ['data', 'target', 'frame', 'target_names', 'DESCR', 'feature_names', 'filename']
 
-        self.__raw_data = tuple([data_sets.get('data'), data_sets.get('target')])
+        self.__raw_data_tensor_flow = tuple([data_sets.get('data'), data_sets.get('target')])
         data_train, data_test, target_train, target_test = train_test_split(data_sets.get('data'),
                                                                             data_sets.get('target'),
                                                                             train_size=train_size)
@@ -106,7 +113,7 @@ class DataSets:
         # data_keys = list(data_sets.keys())
         # ['data', 'target', 'frame', 'DESCR', 'feature_names', 'data_filename', 'target_filename']
 
-        self.__raw_data = tuple([data_sets.get('data'), data_sets.get('target')])
+        self.__raw_data_tensor_flow = tuple([data_sets.get('data'), data_sets.get('target')])
         data_train, data_test, target_train, target_test = train_test_split(data_sets.get('data'),
                                                                             data_sets.get('target'),
                                                                             train_size=train_size)
@@ -125,7 +132,7 @@ class DataSets:
         # data_keys = list(data_sets.keys())
         # ['data', 'target', 'frame', 'target_names', 'DESCR', 'feature_names']
 
-        self.__raw_data = tuple([data_sets.get('data'), data_sets.get('target')])
+        self.__raw_data_tensor_flow = tuple([data_sets.get('data'), data_sets.get('target')])
         data_train, data_test, target_train, target_test = train_test_split(data_sets.get('data'),
                                                                             data_sets.get('target'),
                                                                             train_size=train_size)
@@ -144,7 +151,7 @@ class DataSets:
         # data_keys = list(data_sets.keys())
         # ['data', 'target', 'feature_names', 'DESCR', 'filename']
 
-        self.__raw_data = tuple([data_sets.get('data'), data_sets.get('target')])
+        self.__raw_data_tensor_flow = tuple([data_sets.get('data'), data_sets.get('target')])
         data_train, data_test, target_train, target_test = train_test_split(data_sets.get('data'),
                                                                             data_sets.get('target'),
                                                                             train_size=train_size)
@@ -155,29 +162,63 @@ class DataSets:
         self.__target_names = array(["MEDV"])
         self.__set_column_names_boston_label()
 
-    def load_mnist(self) -> None:
+    def load_mnist_dataset(self, train_size: float = .75) -> None:
         self.__is_an_image = True
-        self.__raw_data = datasets.mnist.load_data()
-        self.__train_data_set, self.__test_data_set = self.__raw_data
 
-    def load_fashion_mnist(self) -> None:
+        self.__raw_data_tensor_flow = datasets.mnist.load_data()
+        (data_train_tensor, target_train_tensor), (data_test_tensor, target_test_tensor) = self.__raw_data_tensor_flow
+        data_tensor = concatenate((data_train_tensor, data_test_tensor), axis=0)
+        target_tensor = concatenate((target_train_tensor, target_test_tensor), axis=0)
+
+        self.__raw_data_tensor_flow = tuple([data_tensor, target_tensor])
+        data_train, data_test, target_train, target_test = train_test_split(data_tensor,
+                                                                            target_tensor,
+                                                                            train_size=train_size)
+        self.__train_data_set = tuple([data_train, target_train])
+        self.__test_data_set = tuple([data_test, target_test])
+
+    def load_fashion_mnist_dataset(self, train_size: float = .75) -> None:
         self.__is_an_image = True
         self.__is_authentic_label = False
 
-        self.__raw_data = datasets.fashion_mnist.load_data()
-        self.__train_data_set, self.__test_data_set = self.__raw_data
+        self.__raw_data_tensor_flow = datasets.fashion_mnist.load_data()
+        (data_train_tensor, target_train_tensor), (data_test_tensor, target_test_tensor) = self.__raw_data_tensor_flow
+        data_tensor = concatenate((data_train_tensor, data_test_tensor), axis=0)
+        target_tensor = concatenate((target_train_tensor, target_test_tensor), axis=0)
+
+        self.__raw_data_tensor_flow = tuple([data_tensor, target_tensor])
+        data_train, data_test, target_train, target_test = train_test_split(data_tensor,
+                                                                            target_tensor,
+                                                                            train_size=train_size)
+        self.__train_data_set = tuple([data_train, target_train])
+        self.__test_data_set = tuple([data_test, target_test])
         self.__set_authentic_fashion_mnist_label()
 
-    def load_cifar10(self):
-        self.__raw_data = datasets.cifar10.load_data()
-        return self.__raw_data
+    def load_cifar10_dataset(self, train_size: float = .75) -> None:
+        self.__is_an_image = True
+        self.__is_authentic_label = False
+
+        self.__raw_data_tensor_flow = datasets.cifar10.load_data()
+        (data_train_tensor, target_train_tensor), (data_test_tensor, target_test_tensor) = self.__raw_data_tensor_flow
+        data_tensor = concatenate((data_train_tensor, data_test_tensor), axis=0)
+        target_tensor = concatenate((target_train_tensor, target_test_tensor), axis=0)
+
+        self.__raw_data_tensor_flow = tuple([data_tensor, target_tensor])
+        data_train, data_test, target_train, target_test = train_test_split(data_tensor,
+                                                                            target_tensor,
+                                                                            train_size=train_size)
+        target_train = target_train.ravel()
+        target_test = target_test.ravel()
+        self.__train_data_set = tuple([data_train, target_train])
+        self.__test_data_set = tuple([data_test, target_test])
+        self.__set_authentic_cifar10_label()
 
     def load_cifar100(self):
-        self.__raw_data = datasets.cifar100.load_data()
-        return self.__raw_data
+        self.__raw_data_tensor_flow = datasets.cifar100.load_data()
+        return self.__raw_data_tensor_flow
 
     def get_raw_data(self):
-        return self.__raw_data
+        return self.__raw_data_tensor_flow
 
     def get_train_data(self):
         return self.__train_data_set
