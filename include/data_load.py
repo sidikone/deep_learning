@@ -226,6 +226,9 @@ class DataSets:
     def get_test_data(self):
         return self.__test_data_set
 
+    def get_validation_data(self):
+        return self.__validation_data_set
+
     def get_feature_names(self):
         return self.__feature_names
 
@@ -235,7 +238,7 @@ class DataSets:
     def get_authentic_label(self):
         return self.__authentic_label
 
-    def show_sample(self, start: int = 0, nb: int = 3) -> None:
+    def show_sample(self, start: int = 0, nb: int = 3, interpolation: str = 'none') -> None:
         local_data, local_label = self.__train_data_set
         local_data = local_data[start:nb]
         local_label = local_label[start:nb]
@@ -244,18 +247,27 @@ class DataSets:
             local_label = self.__redefine_label(actual=local_label, authentic_ref=self.__authentic_label)
 
         if self.__is_an_image:
-            self.__display_images(data=local_data, label=local_label, nb=nb)
+            self.__display_images(data=local_data, label=local_label, interpol=interpolation, nb=nb)
 
         if self.__is_a_table:
             self.__display_table(data=local_data, label=local_label, nb=nb)
 
-    def __display_images(self, data: ndarray, label: ndarray, nb: int = 0) -> None:
+    def train_validation_split(self, train_size: float = .75) -> None:
+        (data_train_init, target_train_init) = self.__train_data_set
+
+        data_train, data_validation, target_train, target_validation = train_test_split(data_train_init,
+                                                                                        target_train_init,
+                                                                                        train_size=train_size)
+        self.__train_data_set = tuple([data_train, target_train])
+        self.__validation_data_set = tuple([data_validation, target_validation])
+
+    def __display_images(self, data: ndarray, label: ndarray, interpol: str, nb: int = 0) -> None:
         max_col_size = 6
         if nb <= max_col_size:
             fig, axes = plt.subplots(1, nb)
             ax = axes.ravel()
             for ind in range(nb):
-                ax[ind].imshow(data[ind], cmap="gray")
+                ax[ind].imshow(data[ind], cmap="gray", interpolation=interpol)
                 ax[ind].set_title(label[ind], color="r")
                 ax[ind].axis('off')
             plt.show()
