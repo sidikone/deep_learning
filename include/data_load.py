@@ -1,5 +1,5 @@
 from tensorflow.keras import datasets
-from sklearn.datasets import load_iris, load_breast_cancer, load_wine, load_boston, load_diabetes, load_digits
+from sklearn.datasets import load_iris, load_breast_cancer, load_wine, load_boston, load_diabetes
 from sklearn.model_selection import train_test_split
 from matplotlib import pyplot as plt
 from pandas import DataFrame, concat
@@ -212,10 +212,6 @@ class DataSets:
         self.__train_data_set = tuple([data_train, target_train])
         self.__test_data_set = tuple([data_test, target_test])
         self.__set_authentic_cifar10_label()
-
-    def load_cifar100(self):
-        self.__raw_data_tensor_flow = datasets.cifar100.load_data()
-        return self.__raw_data_tensor_flow
 
     def get_raw_data(self):
         return self.__raw_data_tensor_flow
