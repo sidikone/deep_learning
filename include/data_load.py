@@ -18,6 +18,10 @@ class DataSets:
         self.__target_names = None
 
         self.__frame_column_names = None  # only for table
+        self.__frame_data = None  # only for a table
+        self.__frame_train = None
+        self.__frame_test = None
+
         self.__sample_data = None
         self.__info = None
         self.__authentic_label = None  # only if label are not authentic
@@ -66,6 +70,12 @@ class DataSets:
         for elt in actual:
             new_labels.append(authentic_ref[elt])
         return array(new_labels)
+
+    def __data_to_frame(self, data, label, columns):
+        data_df = DataFrame(data, columns=self.__frame_column_names[:-1])
+        label_df = DataFrame(label, columns=[self.__frame_column_names[-1]])
+        final_df = concat([data_df, label_df], axis=1)
+        return final_df
 
     def load_iris_dataset(self, train_size: float = .75) -> None:
         self.__is_a_table = True
@@ -162,6 +172,15 @@ class DataSets:
         self.__target_names = array(["MEDV"])
         self.__set_column_names_boston_label()
 
+        self.__frame_data = self.__data_to_frame(self.__raw_data_tensor_flow[0], self.__raw_data_tensor_flow[1],
+                                                 columns=self.__frame_column_names)
+
+        self.__frame_train = self.__data_to_frame(self.__train_data_set[0], self.__train_data_set[1],
+                                                 columns=self.__frame_column_names)
+
+        self.__frame_test = self.__data_to_frame(self.__test_data_set[0], self.__test_data_set[1],
+                                                 columns=self.__frame_column_names)
+
     def load_mnist_dataset(self, train_size: float = .75) -> None:
         self.__is_an_image = True
 
@@ -216,11 +235,23 @@ class DataSets:
     def get_raw_data(self):
         return self.__raw_data_tensor_flow
 
-    def get_train_data(self):
+    def get_train_raw_data(self):
         return self.__train_data_set
 
-    def get_test_data(self):
+    def get_test_raw_data(self):
         return self.__test_data_set
+
+    def get_validation_raw_data(self):
+        return self.__validation_data_set
+
+    def get_data(self):
+        return self.__frame_data
+
+    def get_train_data(self):
+        return self.__frame_train[self.__frame_train.columns[:-1]], self.__frame_train[[self.__frame_train.columns[-1]]]
+
+    def get_test_data(self):
+        return self.__frame_test[self.__frame_test.columns[:-1]], self.__frame_test[[self.__frame_test.columns[-1]]]
 
     def get_validation_data(self):
         return self.__validation_data_set

@@ -1,22 +1,22 @@
 from include.data_load import DataSets
+from include.regression import Regression
+import numpy as np
 
 
 def main() -> None:
     datasets_obj = DataSets()
-    datasets_obj.load_cifar10_dataset()
-    datasets_obj.train_validation_split()
+    datasets_obj.load_boston_housing_dataset()
 
-    train_data, train_label = datasets_obj.get_train_data()
-    validation_data, validation_label = datasets_obj.get_validation_data()
-    test_data, test_label = datasets_obj.get_test_data()
-    print(train_data.shape)
-    print(validation_data.shape)
-    print(test_data.shape)
+    train_data, train_target = datasets_obj.get_train_data()
+    test_data, test_target = datasets_obj.get_test_data()
 
-    datasets_obj.show_sample(nb=10)
+    reg = Regression("linear")
+    reg.fit(train_data, train_target)
+    train_score = reg.get_score(train_data, train_target)
+    test_score = reg.get_score(test_data, test_target)
+
+    predict = reg.predict(test_data)
 
 
 if __name__ == '__main__':
     main()
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
